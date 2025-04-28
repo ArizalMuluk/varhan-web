@@ -12,10 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const typedTextElement = document.getElementById('typed-text');
     // Ganti frasa ini dengan peran atau deskripsi seniman
     const phrases = [
-        'Pelukis',        // Contoh
-        'Seniman Visual', // Contoh
-        'Pencinta Seni Klasik', // Contoh
-        'Kreator Imajinasi' // Contoh
+        'Painter',              // Example
+        'Visual Artist',        // Example
+        'Classic Art Lover',    // Example
+        'Imagination Creator'   // Example
     ];
 
     let phraseIndex = 0;
