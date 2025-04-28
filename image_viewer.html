@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Artwork</title>
+    <style>
+        /* Basic styling for the viewer page */
+        body {
+            margin: 0;
+            background-color: #222; /* Dark background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Prevent scrollbars if image fits */
+            position: relative; /* Needed for overlay positioning */
+        }
+        .image-container {
+            position: relative; /* Container for image and overlay */
+            max-width: 100%;
+            max-height: 100vh;
+            display: flex; /* Helps with centering if needed */
+            justify-content: center;
+            align-items: center;
+        }
+        .image-container img {
+            display: block; /* Remove extra space below image */
+            max-width: 100%;
+            max-height: 100vh; /* Ensure image doesn't exceed viewport height */
+            object-fit: contain; /* Scale image while preserving aspect ratio */
+            user-select: none; /* Try to prevent text selection highlighting */
+            -webkit-user-drag: none; /* Try to prevent dragging in WebKit */
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10; /* Ensure it's above the image */
+            cursor: default; /* Show default cursor, not text or pointer */
+            /* background-color: rgba(255, 0, 0, 0.1); */ /* Uncomment for debugging overlay position */
+        }
+    </style>
+</head>
+<body>
+    <div class="image-container">
+        <img id="artwork-image" src="" alt="Artwork Full Size">
+        <!-- Transparent overlay to capture mouse events -->
+        <div class="overlay" id="image-overlay"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const imgSrc = urlParams.get('src'); // Get image source from URL parameter ?src=...
+            const imgElement = document.getElementById('artwork-image');
+            const overlayElement = document.getElementById('image-overlay');
+
+            if (imgSrc && imgElement) {
+                imgElement.src = imgSrc;
+                // Set page title based on image filename (optional)
+                try {
+                    const filename = imgSrc.split('/').pop();
+                    document.title = 'View: ' + decodeURIComponent(filename || 'Artwork');
+                } catch (e) {
+                    document.title = 'View Artwork';
+                }
+
+            } else {
+                // Display error if src parameter is missing
+                document.body.innerHTML = '<p style="color: white; font-family: sans-serif;">Error: Image source not found in URL.</p>';
+            }
+
+            // Prevent context menu (right-click) and dragging on the overlay and image
+            function preventActions(e) {
+                e.preventDefault();
+            }
+
+            if (overlayElement) {
+                overlayElement.addEventListener('contextmenu', preventActions);
+                overlayElement.addEventListener('dragstart', preventActions);
+            }
+             // Also apply to image directly as a fallback
+             if (imgElement) {
+                imgElement.addEventListener('contextmenu', preventActions);
+                imgElement.addEventListener('dragstart', preventActions);
+             }
+        });
+    </script>
+</body>
+</html>
