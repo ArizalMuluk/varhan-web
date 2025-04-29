@@ -261,31 +261,207 @@
             border-bottom: 1px solid #d7ccc8;
         }
 
-        /* Mobile Nav */
-        .mobile-nav {
-            transition: transform 0.3s ease;
-            transform: translateY(-100%);
-            background-color: #efebe9;
-            border-bottom: 1px solid #d7ccc8;
+        /* UPDATED MOBILE NAVIGATION STYLES */
+        /* Mobile menu button - ONLY VISIBLE ON MOBILE */
+        .menu-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+            position: relative;
+            z-index: 1001;
         }
-
-        .mobile-nav.show {
+        
+        .menu-btn:hover {
+            background-color: rgba(192, 160, 98, 0.1);
+        }
+        
+        .menu-btn.active {
+            background-color: rgba(192, 160, 98, 0.2);
+        }
+        
+        /* FIXED ICON TRANSITION */
+        .menu-btn .menu-icon {
+            position: absolute;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .menu-btn .fa-bars {
+            opacity: 1;
+            transform: rotate(0);
+        }
+        
+        .menu-btn .fa-times {
+            opacity: 0;
+            transform: rotate(-90deg);
+        }
+        
+        .menu-btn.active .fa-bars {
+            opacity: 0;
+            transform: rotate(90deg);
+        }
+        
+        .menu-btn.active .fa-times {
+            opacity: 1;
+            transform: rotate(0);
+        }
+        
+        /* Ensure menu button is truly hidden on desktop */
+        @media (min-width: 768px) {
+            .menu-btn {
+                display: none !important;
+            }
+        }
+        
+        /* Mobile Navigation Overlay */
+        .mobile-nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(245, 245, 220, 0.98);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .mobile-nav-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .mobile-nav-container {
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+        }
+        
+        .mobile-nav-header {
+            margin-bottom: 2.5rem;
+        }
+        
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+        }
+        
+        .mobile-nav-link {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #5d4037;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            display: block;
+        }
+        
+        .mobile-nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0.5rem;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: #c0a062;
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+        
+        .mobile-nav-link:hover {
+            color: #c0a062;
+            background-color: rgba(192, 160, 98, 0.1);
+        }
+        
+        .mobile-nav-link:hover::after,
+        .mobile-nav-link.active::after {
+            width: 30px;
+            left: calc(50% - 15px);
+        }
+        
+        .mobile-nav-link.active {
+            color: #c0a062;
+            background-color: rgba(192, 160, 98, 0.15);
+            font-weight: 600;
+        }
+        
+        .mobile-nav-social {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .mobile-nav-social a {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: #efebe9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #5d4037;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(93, 64, 55, 0.1);
+        }
+        
+        .mobile-nav-social a:hover {
+            background-color: #c0a062;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(192, 160, 98, 0.3);
+        }
+        
+        .mobile-nav-footer {
+            font-size: 0.875rem;
+            color: #8d6e63;
+        }
+        
+        /* Mobile nav animations */
+        .mobile-nav-overlay .mobile-nav-link,
+        .mobile-nav-overlay .mobile-nav-social a,
+        .mobile-nav-overlay .mobile-nav-footer {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            transition-delay: 0.1s;
+        }
+        
+        .mobile-nav-overlay.show .mobile-nav-link,
+        .mobile-nav-overlay.show .mobile-nav-social a,
+        .mobile-nav-overlay.show .mobile-nav-footer {
+            opacity: 1;
             transform: translateY(0);
         }
-
-        .mobile-nav-link {
-            color: #5d4037;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .mobile-nav-link:hover {
-            background-color: #c0a062;
-            color: #ffffff;
-        }
-
-        .mobile-nav-link.active {
-            background-color: #dcd0c0;
-            font-weight: 500;
+        
+        /* Staggered animation for nav links */
+        .mobile-nav-overlay .mobile-nav-link:nth-child(1) { transition-delay: 0.1s; }
+        .mobile-nav-overlay .mobile-nav-link:nth-child(2) { transition-delay: 0.15s; }
+        .mobile-nav-overlay .mobile-nav-link:nth-child(3) { transition-delay: 0.2s; }
+        .mobile-nav-overlay .mobile-nav-link:nth-child(4) { transition-delay: 0.25s; }
+        .mobile-nav-overlay .mobile-nav-link:nth-child(5) { transition-delay: 0.3s; }
+        
+        .mobile-nav-overlay .mobile-nav-social a:nth-child(1) { transition-delay: 0.35s; }
+        .mobile-nav-overlay .mobile-nav-social a:nth-child(2) { transition-delay: 0.4s; }
+        
+        .mobile-nav-overlay .mobile-nav-footer { transition-delay: 0.45s; }
+        
+        /* Prevent scrolling when menu is open */
+        body.menu-open {
+            overflow: hidden;
         }
 
         /* Typing Cursor */
@@ -415,27 +591,46 @@
         <div class="container mx-auto container-padding flex justify-between items-center">
             <a href="#" class="text-2xl font-semibold text-accent-gold" style="font-family: 'Playfair Display', serif;">VarhanAli.</a>
             <div class="hidden md:flex space-x-8">
-                <a href="#home" class="nav-link active">Home</a> <!-- Translated -->
-                <a href="#about" class="nav-link">About the Artist</a> <!-- Translated -->
-                <a href="#skills" class="nav-link">Techniques & Mediums</a> <!-- Translated -->
-                <a href="#gallery" class="nav-link">Gallery</a> <!-- Translated -->
-                <a href="#contact" class="nav-link">Contact</a> <!-- Translated -->
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#about" class="nav-link">About the Artist</a>
+                <a href="#skills" class="nav-link">Techniques & Mediums</a>
+                <a href="#gallery" class="nav-link">Gallery</a>
+                <a href="#contact" class="nav-link">Contact</a>
             </div>
-            <button class="md:hidden text-stone-700 focus:outline-none" id="menuBtn" aria-label="Open mobile menu">
-                <i class="fas fa-bars text-xl"></i>
+            <!-- FIXED: Mobile menu button - Only visible on mobile screens -->
+            <button class="md:hidden menu-btn text-stone-700 focus:outline-none" id="menuBtn" aria-label="Toggle mobile menu">
+                <i class="fas fa-bars text-xl menu-icon"></i>
+                <i class="fas fa-times text-xl menu-icon"></i>
             </button>
         </div>
-        <!-- Mobile Navigation -->
-        <div class="mobile-nav fixed top-[76px] left-0 w-full shadow-lg md:hidden z-40" id="mobileNav" aria-label="Mobile Navigation Menu">
-            <div class="container mx-auto container-padding py-4 flex flex-col space-y-1">
-                <a href="#home" class="mobile-nav-link block py-2 px-4 rounded">Home</a> <!-- Translated -->
-                <a href="#about" class="mobile-nav-link block py-2 px-4 rounded">About the Artist</a> <!-- Translated -->
-                <a href="#skills" class="mobile-nav-link block py-2 px-4 rounded">Techniques & Mediums</a> <!-- Translated -->
-                <a href="#gallery" class="mobile-nav-link block py-2 px-4 rounded">Gallery</a> <!-- Translated -->
-                <a href="#contact" class="mobile-nav-link block py-2 px-4 rounded">Contact</a> <!-- Translated -->
+    </nav>
+    
+    <!-- NEW Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay md:hidden" id="mobileNavOverlay" aria-label="Mobile Navigation Menu">
+        <div class="mobile-nav-container">
+            <div class="mobile-nav-header">
+                <h2 class="text-2xl font-semibold text-accent-gold" style="font-family: 'Playfair Display', serif;">Varhan Ali Axzan</h2>
+            </div>
+            <div class="mobile-nav-links">
+                <a href="#home" class="mobile-nav-link">Home</a>
+                <a href="#about" class="mobile-nav-link">About the Artist</a>
+                <a href="#skills" class="mobile-nav-link">Techniques & Mediums</a>
+                <a href="#gallery" class="mobile-nav-link">Gallery</a>
+                <a href="#contact" class="mobile-nav-link">Contact</a>
+            </div>
+            <div class="mobile-nav-social">
+                <a href="https://instagram.com/varhanaliaxzan" target="_blank" rel="noopener noreferrer" aria-label="Visit Varhan Ali Axzan's Instagram profile">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://tiktok.com/@varhanndekave" target="_blank" rel="noopener noreferrer" aria-label="Visit Varhan Ali Axzan's TikTok profile">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+            </div>
+            <div class="mobile-nav-footer">
+                <p>&copy; 2025 Varhan Ali Axzan</p>
             </div>
         </div>
-    </nav>
+    </div>
 
     <!-- Hero Section -->
     <section id="home" class="min-h-screen pt-36 lg:pt-44 relative overflow-hidden flex flex-col" aria-labelledby="home-heading">
@@ -443,7 +638,7 @@
             <div class="flex flex-col md:flex-row items-center justify-between gap-12 lg:gap-16">
                 <div class="text-center md:text-left max-w-xl md:w-1/2 lg:w-7/12">
                     <h1 id="home-heading" class="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 leading-tight">
-                        <span class="text-stone-800">Welcome to the Gallery</span><br> <!-- Translated -->
+                        <span class="text-stone-800">Welcome to the Gallery</span><br>
                         <span class="text-accent-gold">Varhan Ali Axzan</span>
                     </h1>
                     <div class="text-2xl md:text-3xl font-medium text-stone-700 mb-8 h-16">
@@ -452,13 +647,13 @@
                     <p class="text-lg text-stone-600 mb-10 leading-relaxed">Journey through pixels and light, where each digital creation is a reflection of inner landscapes shaped by emotion and experience. Explore artworks born from introspection and translated into the visual language of the digital age.
                     </p>
                     <div class="flex flex-wrap justify-center md:justify-start gap-4">
-                        <a href="#gallery" class="btn btn-primary">View Gallery</a> <!-- Translated -->
-                        <a href="#contact" class="btn btn-secondary">Contact Me</a> <!-- Translated -->
+                        <a href="#gallery" class="btn btn-primary">View Gallery</a>
+                        <a href="#contact" class="btn btn-secondary">Contact Me</a>
                     </div>
                 </div>
                 <div class="w-full md:w-1/2 lg:w-5/12 flex justify-center md:justify-end mt-10 md:mt-0 fade-in">
                     <div class="rounded-lg overflow-hidden shadow-xl border-4 border-white w-full max-w-sm md:max-w-md lg:max-w-lg" style="border-color: rgba(255,255,255,0.5);">
-                        <img src="/static/icon/dokumentasi3.jpg" alt="Featured Artwork" class="w-full h-auto object-cover"> <!-- Alt text slightly improved -->
+                        <img src="/static/icon/dokumentasi3.jpg" alt="Featured Artwork" class="w-full h-auto object-cover">
                     </div>
                 </div>
             </div>
@@ -466,7 +661,6 @@
 
         <div class="horizontal-scroll-gallery" aria-label="Scrolling artwork preview gallery">
             <div class="gallery-track">
-                <!-- Alt text can remain descriptive or be translated if needed -->
                 <img src="/static/icon/paint1.jpg" alt="Abstract Artwork Detail">
                 <img src="/static/icon/dokumentasi1.jpg" alt="Artist painting in the studio">
                 <img src="/static/icon/paint2.jpg" alt="Landscape Painting">
@@ -488,6 +682,7 @@
         </div>
     </section>
 
+    <!-- Rest of the content remains the same -->
     <!-- About Section -->
     <section id="about" class="section-padding bg-stone-200" aria-labelledby="about-heading">
         <div class="container mx-auto container-padding">
@@ -567,7 +762,6 @@
             <!-- End Updated Skills Grid -->
         </div>
     </section>
-
 
     <!-- Projects Section (Gallery) -->
     <section id="gallery" class="section-padding bg-stone-200" aria-labelledby="gallery-heading">

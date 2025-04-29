@@ -142,41 +142,93 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-
 });
 
-// Mobile Navigation
+// NEW Mobile Navigation
 document.addEventListener('DOMContentLoaded', () => {
     const menuBtn = document.getElementById('menuBtn');
-    const mobileNav = document.getElementById('mobileNav');
-
-    // Pastikan elemen ada
-    if (!menuBtn || !mobileNav) return;
-
-    menuBtn.addEventListener('click', () => {
-        mobileNav.classList.toggle('show'); // Kelas 'show' ditambahkan/dihapus di CSS baru
-
-        const icon = menuBtn.querySelector('i');
-        if (mobileNav.classList.contains('show')) {
-            icon.classList.remove('fa-bars');
-            icon.classList.add('fa-times');
-        } else {
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
-        }
-    });
-
-    // Tutup navigasi mobile saat link diklik
+    const mobileNavOverlay = document.getElementById('mobileNavOverlay');
     const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
-    mobileNavLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            mobileNav.classList.remove('show');
-            // Kembalikan ikon ke bars
-            const icon = menuBtn.querySelector('i');
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
+    const body = document.body;
+
+    // Toggle mobile menu
+    function toggleMobileMenu() {
+        menuBtn.classList.toggle('active');
+        mobileNavOverlay.classList.toggle('show');
+        body.classList.toggle('menu-open');
+    }
+
+    // Setup event listeners
+    if (menuBtn && mobileNavOverlay) {
+        // Toggle menu when button is clicked
+        menuBtn.addEventListener('click', toggleMobileMenu);
+
+        // Close menu when a link is clicked
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                toggleMobileMenu();
+                
+                // Update active link
+                mobileNavLinks.forEach(navLink => {
+                    navLink.classList.remove('active');
+                });
+                link.classList.add('active');
+            });
         });
-    });
+
+        // Close menu when clicking outside (on the overlay background)
+        mobileNavOverlay.addEventListener('click', (e) => {
+            // Only close if clicking the overlay itself, not its children
+            if (e.target === mobileNavOverlay) {
+                toggleMobileMenu();
+            }
+        });
+
+        // Close menu when ESC key is pressed
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mobileNavOverlay.classList.contains('show')) {
+                toggleMobileMenu();
+            }
+        });
+    }
+
+    // Update active link based on current section
+    function updateActiveMobileLink() {
+        const scrollY = window.pageYOffset;
+        const sections = document.querySelectorAll('section[id]');
+        
+        let currentSectionId = '';
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 80;
+            const sectionHeight = section.clientHeight;
+            
+            if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+                currentSectionId = section.getAttribute('id');
+            }
+        });
+        
+        // Handle edge cases
+        if (!currentSectionId && scrollY < sections[0].offsetTop - 80) {
+            currentSectionId = sections[0].getAttribute('id');
+        } else if (!currentSectionId && scrollY + window.innerHeight >= document.body.offsetHeight - 5) {
+            currentSectionId = sections[sections.length - 1].getAttribute('id');
+        }
+        
+        // Update mobile nav links
+        mobileNavLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${currentSectionId}`) {
+                link.classList.add('active');
+            }
+        });
+    }
+    
+    // Initial call to set active link
+    updateActiveMobileLink();
+    
+    // Update on scroll
+    window.addEventListener('scroll', updateActiveMobileLink);
 });
 
 // Smooth Scrolling
@@ -208,16 +260,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     top: offsetPosition,
                     behavior: 'smooth'
                 });
-
-                // Tutup mobile nav jika terbuka (tambahan)
-                const mobileNav = document.getElementById('mobileNav');
-                const menuBtn = document.getElementById('menuBtn');
-                if (mobileNav && mobileNav.classList.contains('show')) {
-                    mobileNav.classList.remove('show');
-                    const icon = menuBtn.querySelector('i');
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
-                }
             }
             // Jika targetElement tidak ditemukan, biarkan browser menangani link (mungkin link eksternal)
         });
@@ -229,7 +271,6 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     const sections = document.querySelectorAll('section[id]'); // Hanya pilih section yang punya ID
     const navLinks = document.querySelectorAll('.nav-link'); // Link navigasi desktop
-    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link'); // Link navigasi mobile
 
     function updateActiveLink() {
         let currentSectionId = '';
@@ -261,14 +302,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 link.classList.add('active');
             }
         });
-
-        // Update link mobile (opsional, jika ingin gaya aktif di mobile juga)
-        mobileNavLinks.forEach(link => {
-            link.classList.remove('active'); // Anda perlu menambahkan style untuk .active di .mobile-nav-link jika mau
-            if (link.getAttribute('href') === `#${currentSectionId}`) {
-                link.classList.add('active');
-            }
-        });
     }
 
     window.addEventListener('scroll', updateActiveLink);
@@ -278,32 +311,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Fade-in Animation on Scroll
 document.addEventListener('DOMContentLoaded', () => {
-    const fadeElements = document.querySelectorAll('.fade-in');
+    const fadeElements = document.querySelectorAll('.fade-in'); // <-- Memilih semua elemen dengan kelas .fade-in
 
     // Pastikan IntersectionObserver didukung
     if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
+                // Jika elemen masuk ke viewport (sesuai threshold)
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('appear'); // Kelas 'appear' dihandle CSS baru
-                    observer.unobserve(entry.target); // Hentikan observasi setelah muncul
+                    // Tambahkan kelas 'appear' untuk memicu transisi CSS
+                    entry.target.classList.add('appear');
+                    // Hentikan observasi elemen ini agar animasi tidak berulang
+                    observer.unobserve(entry.target);
                 }
             });
         }, {
             threshold: 0.1 // Muncul saat 10% elemen terlihat
         });
 
+        // Mulai mengamati setiap elemen .fade-in
         fadeElements.forEach(element => {
             observer.observe(element);
         });
     } else {
-        // Fallback jika IntersectionObserver tidak didukung (jarang terjadi)
-        // Tampilkan semua elemen secara langsung atau gunakan metode scroll event (kurang performan)
+        // Fallback jika IntersectionObserver tidak didukung
         fadeElements.forEach(element => {
             element.classList.add('appear');
         });
     }
 });
+
 
 
 // Back to Top Button
@@ -333,21 +370,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-
-// Tambahkan style ini di CSS Anda untuk kelas .show-back-to-top
-/*
-#backToTop {
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-}
-
-#backToTop.show-back-to-top {
-    opacity: 1;
-    visibility: visible;
-}
-*/
-
 
 // Form Validation (Simple)
 document.addEventListener('DOMContentLoaded', () => {
@@ -473,19 +495,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
-// Anda perlu menambahkan atribut data-src pada tag <img> di HTML Anda
-// dan src awal bisa berupa placeholder kecil atau transparan.
-// Contoh di HTML:
-// <img src="placeholder-small.jpg" data-src="real-image.jpg" alt="..." class="lazy-image">
-
-// Contoh CSS untuk fade-in gambar setelah dimuat:
-/*
-img {
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
-}
-img:not(.loaded) { // Gaya awal sebelum dimuat (jika menggunakan kelas .loaded)
-    opacity: 0;
-}
-*/
