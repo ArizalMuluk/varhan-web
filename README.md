@@ -1,3 +1,3 @@
 # Static Website
 
-### ❌ not yet paid
+## Free 
