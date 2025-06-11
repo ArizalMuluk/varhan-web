@@ -1,2 +1,1 @@
-# varhan-web
-# farhans_portofolio
+# Static Website
